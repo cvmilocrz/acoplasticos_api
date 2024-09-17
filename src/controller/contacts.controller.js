@@ -2,22 +2,26 @@ import { getConnection } from "../database/connection.js";
 
 // Obtener todos los contactos
 export const getContacts = async (req, res) => {
+  let connection;
   try {
-    const connection = await getConnection(); // Obtenemos una conexión a la base de datos
+    connection = await getConnection(); // Obtenemos una conexión a la base de datos
     const sql = "SELECT * FROM contacts"; // Consultamos la tabla contacts
     const [contacts] = await connection.query(sql); // Obtenemos los datos de la consulta
     res.json(contacts); // Enviamos los datos a la respuesta
   } catch (error) {
     console.error("Error obteniendo contactos:", error);
     res.status(500).json({ error: "Error obteniendo contactos" }); // Enviamos un mensaje de error al cliente
+  } finally {
+    if (connection) connection.release(); // Liberamos la conexión en el bloque finally
   }
 };
 
 // Obtener un contacto por ID
 export const getContactById = async (req, res) => {
+  let connection;
   const { id } = req.params; // Obtenemos el ID del contacto
   try {
-    const connection = await getConnection(); // Obtenemos una conexión a la base de datos
+    connection = await getConnection(); // Obtenemos una conexión a la base de datos
     const sql = `SELECT * FROM contacts WHERE id = ?`; // Consultamos la tabla contacts
     const [contact] = await connection.query(sql, [id]); // Obtenemos los datos de la consulta
     if (contact.length === 0) {
@@ -27,13 +31,16 @@ export const getContactById = async (req, res) => {
   } catch (error) {
     console.error("Error obteniendo contacto:", error);
     res.status(500).json({ error: "Error obteniendo contacto" }); // Enviamos un mensaje de error al cliente
+  } finally {
+    if (connection) connection.release(); // Liberamos la conexión en el bloque finally
   }
 };
 
 // Crear un nuevo contacto
 export const createContact = async (req, res) => {
+  let connection;
   try {
-    const connection = await getConnection(); // Obtenemos una conexión a la base de datos
+    connection = await getConnection(); // Obtenemos una conexión a la base de datos
     const {
       NIT,
       protocol,
@@ -57,13 +64,16 @@ export const createContact = async (req, res) => {
   } catch (error) {
     console.error("Error creando contacto:", error);
     res.status(500).json({ error: "Error creando contacto" }); // Enviamos un mensaje de error al cliente
+  } finally {
+    if (connection) connection.release(); // Liberamos la conexión en el bloque finally
   }
 };
 
 // Actualizar un contacto
 export const updateContact = async (req, res) => {
+  let connection;
   try {
-    const connection = await getConnection(); // Obtenemos una conexión a la base de datos
+    connection = await getConnection(); // Obtenemos una conexión a la base de datos
     const { id } = req.params; // Obtenemos el ID del contacto
     const {
       NIT,
@@ -92,13 +102,16 @@ export const updateContact = async (req, res) => {
   } catch (error) {
     console.error("Error actualizando contacto:", error);
     res.status(500).json({ error: "Error actualizando contacto" }); // Enviamos un mensaje de error al cliente
+  } finally {
+    if (connection) connection.release(); // Liberamos la conexión en el bloque finally
   }
 };
 
 // Eliminar un contacto
 export const deleteContact = async (req, res) => {
+  let connection;
   try {
-    const connection = await getConnection(); // Obtenemos una conexión a la base de datos
+    connection = await getConnection(); // Obtenemos una conexión a la base de datos
     const { id } = req.params; // Obtenemos el ID del contacto
     const sql = `DELETE FROM contacts WHERE id = ?`; // Eliminamos el contacto
     const result = await connection.query(sql, [id]); // Ejecutamos la consulta
@@ -109,5 +122,7 @@ export const deleteContact = async (req, res) => {
   } catch (error) {
     console.error("Error eliminando contacto:", error);
     res.status(500).json({ error: "Error eliminando contacto" }); // Enviamos un mensaje de error al cliente
+  } finally {
+    if (connection) connection.release(); // Liberamos la conexión en el bloque finally
   }
 };

@@ -2,22 +2,26 @@ import { getConnection } from "../database/connection.js";
 
 // Obtener todas las empresas
 export const getCompanies = async (req, res) => {
+  let connection;
   try {
-    const connection = await getConnection(); // Obtenemos una conexión a la base de datos
+    connection = await getConnection(); // Obtenemos una conexión del pool
     const sql = "SELECT * FROM companies"; // Consultamos la tabla companies
     const [companies] = await connection.query(sql); // Obtenemos los datos de la consulta
     res.json(companies); // Enviamos los datos a la respuesta
   } catch (error) {
     console.error("Error obteniendo empresas:", error);
-    res.status(500).json({ error: "Error obteniendo empresas" }); // Enviamos un mensaje de error al cliente
+    res.status(500).json({ error: "Error obteniendo empresas" });
+  } finally {
+    if (connection) connection.release(); // Liberamos la conexión al pool
   }
 };
 
 // Obtener una empresa por NIT
 export const getCompanyByNIT = async (req, res) => {
   const { nit } = req.params; // Obtenemos el NIT de la empresa
+  let connection;
   try {
-    const connection = await getConnection(); // Obtenemos una conexión a la base de datos
+    connection = await getConnection(); // Obtenemos una conexión del pool
     const sql = `SELECT * FROM companies WHERE NIT = ?`; // Consultamos la tabla companies
     const [company] = await connection.query(sql, [nit]); // Obtenemos los datos de la consulta
     if (company.length === 0) {
@@ -26,14 +30,17 @@ export const getCompanyByNIT = async (req, res) => {
     res.json(company[0]); // Enviamos la empresa encontrada
   } catch (error) {
     console.error("Error obteniendo empresa:", error);
-    res.status(500).json({ error: "Error obteniendo empresa" }); // Enviamos un mensaje de error al cliente
+    res.status(500).json({ error: "Error obteniendo empresa" });
+  } finally {
+    if (connection) connection.release(); // Liberamos la conexión al pool
   }
 };
 
 // Crear una nueva empresa
 export const createCompany = async (req, res) => {
+  let connection;
   try {
-    const connection = await getConnection(); // Obtenemos una conexión a la base de datos
+    connection = await getConnection(); // Obtenemos una conexión del pool
     const {
       NIT,
       company_name,
@@ -73,14 +80,17 @@ export const createCompany = async (req, res) => {
     res.json({ message: "Empresa creada", NIT: result.insertId }); // Enviamos el NIT de la empresa creada
   } catch (error) {
     console.error("Error creando empresa:", error);
-    res.status(500).json({ error: "Error creando empresa" }); // Enviamos un mensaje de error al cliente
+    res.status(500).json({ error: "Error creando empresa" });
+  } finally {
+    if (connection) connection.release(); // Liberamos la conexión al pool
   }
 };
 
 // Actualizar una empresa
 export const updateCompany = async (req, res) => {
+  let connection;
   try {
-    const connection = await getConnection(); // Obtenemos una conexión a la base de datos
+    connection = await getConnection(); // Obtenemos una conexión del pool
     const { nit } = req.params; // Obtenemos el NIT de la empresa
     const {
       company_name,
@@ -120,26 +130,31 @@ export const updateCompany = async (req, res) => {
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: "Empresa no encontrada" });
     }
-    res.json({ message: "Empresa actualizada" }); // Confirmamos la actualización
+    res.json({ message: "Empresa actualizada" });
   } catch (error) {
     console.error("Error actualizando empresa:", error);
-    res.status(500).json({ error: "Error actualizando empresa" }); // Enviamos un mensaje de error al cliente
+    res.status(500).json({ error: "Error actualizando empresa" });
+  } finally {
+    if (connection) connection.release(); // Liberamos la conexión al pool
   }
 };
 
 // Eliminar una empresa
 export const deleteCompany = async (req, res) => {
+  let connection;
   try {
-    const connection = await getConnection(); // Obtenemos una conexión a la base de datos
+    connection = await getConnection(); // Obtenemos una conexión del pool
     const { nit } = req.params; // Obtenemos el NIT de la empresa
     const sql = `DELETE FROM companies WHERE NIT = ?`; // Eliminamos la empresa
     const result = await connection.query(sql, [nit]); // Ejecutamos la consulta
     if (result.affectedRows === 0) {
       return res.status(404).json({ error: "Empresa no encontrada" });
     }
-    res.json({ message: "Empresa eliminada" }); // Confirmamos la eliminación
+    res.json({ message: "Empresa eliminada" });
   } catch (error) {
     console.error("Error eliminando empresa:", error);
-    res.status(500).json({ error: "Error eliminando empresa" }); // Enviamos un mensaje de error al cliente
+    res.status(500).json({ error: "Error eliminando empresa" });
+  } finally {
+    if (connection) connection.release(); // Liberamos la conexión al pool
   }
 };

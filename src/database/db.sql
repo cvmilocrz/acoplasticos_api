@@ -11,7 +11,8 @@ CREATE TABLE users (
 );
 
 CREATE TABLE companies (
-  NIT VARCHAR(20) PRIMARY KEY,
+  id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+  NIT VARCHAR(20),
   company_name VARCHAR(255) NOT NULL, -- Razón Social
   acronym VARCHAR(50), -- Sigla
   affiliation_status INT NOT NULL,
@@ -44,5 +45,5 @@ CREATE TABLE contacts (
   mobile VARCHAR(50),
   address VARCHAR(255),
   city VARCHAR(100),
-  FOREIGN KEY (NIT) REFERENCES companies(NIT) ON DELETE CASCADE -- Relación con la tabla de empresas
+  FOREIGN KEY (NIT) REFERENCES companies(id) ON DELETE CASCADE -- Relación con la tabla de empresas
 );

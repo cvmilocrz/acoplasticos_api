@@ -13,7 +13,7 @@ const router = Router();
 router.get('/', getCompanies); // GET /api/companies
 router.get('/:NIT', getCompanyByNIT); // GET /api/companies/:NIT
 router.post('/', createCompany); // POST /api/companies
-router.put('/:NIT', updateCompany); // PUT /api/companies/:NIT
-router.delete('/:NIT', deleteCompany); // DELETE /api/companies/:NIT
+router.put('/:id', updateCompany); // PUT /api/companies/:NIT
+router.delete('/:id', deleteCompany); // DELETE /api/companies/:NIT
 
 export default router;
